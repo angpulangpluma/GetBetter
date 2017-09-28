@@ -16,18 +16,18 @@ public class timealgo {
     private FileWriter fw;
     private BufferedWriter bw;
 
-    public time_algo(){
+    public timealgo(){
         this.textalgo = null;
         this.filealgo = null;
         this.fw = null;
         this.bw = null;
     }
 
-    public time_algo(text_aes ta){
+    public timealgo(text_aes ta){
         this.textalgo = ta;
     }
 
-    public time_algo(file_aes fa){
+    public timealgo(file_aes fa){
         this.filealgo = fa;
     }
 

@@ -28,7 +28,7 @@ public class file_aes {
 
     public file_aes(aes enc){
         this.filealgo = enc;
-        filealgo.setKey();
+//        filealgo.setKey();
     }
 
     public aes getCrypt(){
