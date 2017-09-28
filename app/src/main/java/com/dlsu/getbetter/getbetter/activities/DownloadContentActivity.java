@@ -267,7 +267,7 @@ public class DownloadContentActivity extends AppCompatActivity implements View.O
         new UpdateCaseRecords().execute(caseRecords);
     }
 
-    private void downloadSelectedData(ArrayList<CaseRecord> caseRecords) {
+    private void downloadSelectedData(ArrayList<CaseRecord> caseRecords) { //decrypt here
 
         final ArrayList<String> fileUrl = new ArrayList<>();
 

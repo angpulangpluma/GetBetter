@@ -19,6 +19,7 @@ import java.util.ArrayList;
 /**
  * Created by mikedayupay on 10/01/2016.
  * GetBetter 2016
+ * ADD: get encrypt key function, final value for encryption key
  */
 public class DataAdapter {
 

@@ -163,7 +163,7 @@ public class SummaryPageFragment extends Fragment implements View.OnClickListene
         attachments = new ArrayList<>();
         uploadedDate = getTimeStamp();
 
-        fileAdapter = new FileAttachmentsAdapter(attachments);
+        fileAdapter = new FileAttachmentsAdapter(attachments); //encrypt here
         addPhotoAttachment(patientInfoFormImage, patientInfoFormImageTitle, uploadedDate);
         addPhotoAttachment(familySocialHistoryFormImage, familySocialHistoryFormImageTitle, uploadedDate);
         addPhotoAttachment(chiefComplaintFormImage, chiefComplaintFormImageTitle, uploadedDate);
@@ -185,7 +185,7 @@ public class SummaryPageFragment extends Fragment implements View.OnClickListene
 
         nMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
-        try {
+        try { //encrypt here
             nMediaPlayer.setDataSource(recordedHpiOutputFile);
             nMediaPlayer.prepare();
         } catch (IOException e) {
@@ -851,7 +851,7 @@ public class SummaryPageFragment extends Fragment implements View.OnClickListene
         return Uri.fromFile(createMediaFile(type));
     }
 
-    private void takePicture() {
+    private void takePicture() { //encrypt here
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
@@ -860,7 +860,7 @@ public class SummaryPageFragment extends Fragment implements View.OnClickListene
         startActivityForResult(intent, REQUEST_IMAGE_ATTACHMENT);
     }
 
-    private void recordVideo() {
+    private void recordVideo() { //encrypt here
 
         Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
         fileUri = getOutputMediaFileUri(MEDIA_TYPE_VIDEO);
@@ -876,7 +876,7 @@ public class SummaryPageFragment extends Fragment implements View.OnClickListene
 
     }
 
-    private void setPic(ImageView mImageView, String mCurrentPhotoPath) {
+    private void setPic(ImageView mImageView, String mCurrentPhotoPath) { //decrypt here
         // Get the dimensions of the View
         int targetW = 255;//mImageView.getWidth();
         int targetH = 200;// mImageView.getHeight();

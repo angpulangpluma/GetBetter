@@ -296,7 +296,7 @@ public class NewPatientFragment extends Fragment implements View.OnClickListener
         }
     }
 
-    private File createImageFile() {
+    private File createImageFile() { //encrypt here
 
         File mediaStorageDir = new File (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
                 DirectoryConstants.PROFILE_IMAGE_DIRECTORY_NAME);

@@ -242,7 +242,7 @@ public class CaptureDocumentsActivity extends AppCompatActivity implements View.
 
     }
 
-    private String captureDocument(String fileName, int requestId) {
+    private String captureDocument(String fileName, int requestId) { //encrypt here
 
         File imageFile = null;
         String imagePath = "null";

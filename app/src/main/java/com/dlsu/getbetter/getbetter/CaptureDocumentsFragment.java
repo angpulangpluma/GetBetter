@@ -293,7 +293,7 @@ public class CaptureDocumentsFragment extends Fragment implements View.OnClickLi
 
     }
 
-    private File createImageFile(String imageTitle) throws IOException {
+    private File createImageFile(String imageTitle) throws IOException { //encrypt here
 
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
