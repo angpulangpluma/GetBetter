@@ -68,8 +68,7 @@ public class aes {
         return this.secretkey;
     }
 
-    public void saveKey(String fileloc) throws FileNotFoundException, IOException {
-//        File output = new File(fileloc);
+    public void saveKey(String fileloc) throws Exception {
         //save key to file
         System.out.println("Trying to save key in " + fileloc);
         OutputStream output = null;
@@ -85,7 +84,6 @@ public class aes {
     }
 
     public void retrieveKey(String fileloc) throws IOException{
-//        File output = new File(fileloc);
         //get key from file
         System.out.println("Trying to get key from " + fileloc);
         byte[] result = new byte[(int)new File(fileloc).length()];
@@ -98,82 +96,5 @@ public class aes {
         }
 
     }
-
-    public String getDecryptedString(String str){
-        String decrypted = "";
-        try{
-            cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");
-            cipher.init(Cipher.DECRYPT_MODE, secretkey);
-            decrypted = new String(cipher.doFinal(Base64.decodeBase64(str)));
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        return decrypted;
-    }
-
-    public String getEncryptedString(String str){
-        String encrypted = "";
-        if (secretkey==null){
-            System.out.println("no key");
-        } else{
-            try{
-                cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");
-                cipher.init(Cipher.ENCRYPT_MODE, secretkey);
-                encrypted = Base64.encodeBase64String(cipher.doFinal(str.getBytes("UTF-8")));
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-        }
-        return encrypted;
-    }
-
-//    /**
-//     * Decrypts an AES key from a file using an RSA private key
-//     */
-//    public void loadKey(File in, File privateKeyFile){
-//        try {
-//            // read private key to be used to decrypt the AES key
-//            byte[] encodedKey = new byte[(int)privateKeyFile.length()];
-//            new FileInputStream(privateKeyFile).read(encodedKey);
-//
-//            // create private key
-//            PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(encodedKey);
-//            KeyFactory kf = KeyFactory.getInstance("RSA");
-//            PrivateKey pk = kf.generatePrivate(privateKeySpec);
-//
-//            // read AES key
-//            cipher.init(Cipher.DECRYPT_MODE, pk);
-//            key = new byte[AES_Key_Size/8];
-//            CipherInputStream is = new CipherInputStream(new FileInputStream(in), cipher);
-//            is.read(key);
-//            secretkey = new SecretKeySpec(key, "AES");
-//        } catch (Exception e){
-//            e.printStackTrace();
-//        }
-//    }
-
-//    /**
-//     * Encrypts the AES key to a file using an RSA public key
-//     */
-//    public void saveKey(File out, File publicKeyFile){
-//        try {
-//            // read public key to be used to encrypt the AES key
-//            byte[] encodedKey = new byte[(int)publicKeyFile.length()];
-//            new FileInputStream(publicKeyFile).read(encodedKey);
-//
-//            // create public key
-//            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(encodedKey);
-//            KeyFactory kf = KeyFactory.getInstance("RSA");
-//            PublicKey pk = kf.generatePublic(publicKeySpec);
-//
-//            // write AES key
-//            cipher.init(Cipher.ENCRYPT_MODE, pk);
-//            CipherOutputStream os = new CipherOutputStream(new FileOutputStream(out), cipher);
-//            os.write(key);
-//            os.close();
-//        } catch(Exception e){
-//            e.printStackTrace();
-//        }
-//    }
 
 }

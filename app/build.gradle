@@ -33,4 +33,5 @@ dependencies {
     compile 'com.balysv:material-ripple:1.0.2'
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'com.wdullaer:materialdatetimepicker:2.5.0'
+    compile files('libs/commons-codec-1.10/commons-codec-1.10.jar')
 }

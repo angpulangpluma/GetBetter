@@ -21,10 +21,14 @@ import android.widget.Spinner;
 
 import com.dlsu.getbetter.getbetter.DirectoryConstants;
 import com.dlsu.getbetter.getbetter.R;
+import com.dlsu.getbetter.getbetter.cryptoGB.cryptoFileService;
 import com.dlsu.getbetter.getbetter.database.DataAdapter;
 import com.dlsu.getbetter.getbetter.objects.Patient;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -352,11 +356,39 @@ public class UpdatePatientRecordActivity extends AppCompatActivity implements Vi
     private void takePicture() {
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        fileUri = Uri.fromFile(createImageFile());
+        File img = createImageFile();
+        fileUri = Uri.fromFile(img);
 
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
         startActivityForResult(intent, REQUEST_IMAGE1);
 
+        intent = new Intent(this, cryptoFileService.class);
+        try {
+            intent.putExtra(cryptoFileService.CRYPTO_FILE_INPUT, read(img));
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+        startService(intent);
+
+    }
+
+    private byte[] read(File file) throws IOException{
+        byte[] buffer = new byte[(int) file.length()];
+        InputStream ios = null;
+        try{
+            ios = new FileInputStream(file);
+            if(ios.read(buffer)==-1){
+                throw new IOException(
+                        "EOF reached while trying to read the whole file.");
+            }
+        } finally{
+            try {
+                if (ios != null) ios.close();
+            } catch (IOException e){
+
+            }
+        }
+        return buffer;
     }
 
     private void setPic(CircleImageView mImageView, String mCurrentPhotoPath) {

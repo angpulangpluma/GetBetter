@@ -12,9 +12,8 @@ import java.io.IOException;
 
 
 
-public class cryptoService extends IntentService {
+public class cryptoTextService extends IntentService {
 
-    private file_aes cryptfile = null;
     private text_aes crypttext = null;
     private final String keyloc;
 
@@ -23,7 +22,7 @@ public class cryptoService extends IntentService {
      *
      * @param name Used to name the worker thread, important only for debugging.
      */
-    public cryptoService(String name, String fileloc) {
+    public cryptoTextService(String name, String fileloc) {
         super(name);
         aes src = new aes();
         try {
@@ -32,10 +31,15 @@ public class cryptoService extends IntentService {
             e.printStackTrace();
             src.setKey();
         } finally {
-            this.cryptfile = new file_aes(src);
             this.crypttext = new text_aes(src);
             this.keyloc = fileloc;
         }
+    }
+
+    public cryptoTextService(String name, aes src, String fileloc){
+        super(name);
+        this.crypttext = new text_aes(src);
+        this.keyloc = fileloc;
     }
 
     @Override
