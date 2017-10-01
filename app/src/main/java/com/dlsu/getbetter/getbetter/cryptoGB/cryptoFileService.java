@@ -56,7 +56,7 @@ public class cryptoFileService extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
 
         byte[] in = intent.getByteArrayExtra("CRYPTO_FILE_INPUT");
-        if (in.length()>0)
+        if (in.length>0)
             System.out.println("Dekitaaaaaa");
         else System.out.println("Dekinaiiiii");
 //        String ch = intent.getStringExtra("CRYPTO_FILE_CHOICE");

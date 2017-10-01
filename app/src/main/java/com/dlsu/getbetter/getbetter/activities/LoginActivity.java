@@ -87,12 +87,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         if (email.trim().length() > 0 && password.trim().length() > 0) {
 
-            if (email.contains("@")) {
-
-                emailInputLayout.setError("Invalid email");
-                emailInput.requestFocus();
-
-            } else {
+//            if (email.contains("@")) {
+//
+//                emailInputLayout.setError("Invalid email");
+//                emailInput.requestFocus();
+//
+//            } else {
 
                 if (checkLogin(email, password)) {
 
@@ -119,7 +119,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                 }
 
-            }
+//            }
 
         } else {
 
