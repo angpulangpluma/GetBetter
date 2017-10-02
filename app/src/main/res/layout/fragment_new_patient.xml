@@ -23,6 +23,13 @@
             android:textColor="@color/cardBackground"
             android:layout_centerHorizontal="true"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txt_result"
+            android:text="sample string"
+            android:textColor="@color/titlecolor"/>
+
         <!--<android.support.v7.widget.CardView-->
             <!--android:id="@+id/user_label_container"-->
             <!--android:layout_width="1200dp"-->
@@ -307,6 +314,8 @@
             </LinearLayout>
 
         </android.support.v7.widget.CardView>
+
+
 
     </RelativeLayout>
 

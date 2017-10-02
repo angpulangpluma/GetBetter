@@ -28,4 +28,6 @@ public class DirectoryConstants {
 
     public static final String TEST_URL_POST = "http://128.199.205.226/getbetter/test/";
 
+    public static final String CRYPTO_FOLDER = "crypto";
+
 }

@@ -27,4 +27,6 @@
         <item name="android:textColor">@color/colorAlert</item>
     </style>
 
+    <color name="titlecolor">#eaeaea</color>
+
 </resources>

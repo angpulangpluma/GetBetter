@@ -1,15 +1,21 @@
 package com.dlsu.getbetter.getbetter.activities;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.TextInputEditText;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,10 +24,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.dlsu.getbetter.getbetter.DirectoryConstants;
 import com.dlsu.getbetter.getbetter.R;
-import com.dlsu.getbetter.getbetter.cryptoGB.cryptoFileService;
+import com.dlsu.getbetter.getbetter.cryptoGB.BackProcessResponseReciever;
+import com.dlsu.getbetter.getbetter.cryptoGB.CryptoFileService;
 import com.dlsu.getbetter.getbetter.database.DataAdapter;
 import com.dlsu.getbetter.getbetter.objects.Patient;
 
@@ -66,6 +74,9 @@ public class UpdatePatientRecordActivity extends AppCompatActivity implements Vi
 
     private Uri fileUri;
 
+    private BackProcessResponseReciever reciever;
+    public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,7 +100,17 @@ public class UpdatePatientRecordActivity extends AppCompatActivity implements Vi
         showDatePlaceholder();
         bindListeners(this);
 
+        //broadcast stuff
+        IntentFilter filter = new IntentFilter(BackProcessResponseReciever.ACTION_RESP);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        reciever = new BackProcessResponseReciever();
+        registerReceiver(reciever, filter);
+    }
 
+    @Override
+    protected void onStop(){
+        unregisterReceiver(reciever);
+        super.onStop();
     }
 
     private void bindViews(UpdatePatientRecordActivity activity) {
@@ -355,6 +376,10 @@ public class UpdatePatientRecordActivity extends AppCompatActivity implements Vi
 
     private void takePicture() {
 
+        ActivityCompat.requestPermissions(this, new String[]{
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         File img = createImageFile();
         fileUri = Uri.fromFile(img);
@@ -362,9 +387,10 @@ public class UpdatePatientRecordActivity extends AppCompatActivity implements Vi
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
         startActivityForResult(intent, REQUEST_IMAGE1);
 
-        intent = new Intent(this, cryptoFileService.class);
+        intent = new Intent(this, CryptoFileService.class);
         try {
-            intent.putExtra(cryptoFileService.CRYPTO_FILE_INPUT, read(img));
+            intent.putExtra(CryptoFileService.CRYPTO_FILE_INPUT, read(img));
+            intent.putExtra(CryptoFileService.CRYPTO_FILE_NAME, img.getName());
         } catch (IOException e){
             e.printStackTrace();
         }
@@ -484,6 +510,19 @@ public class UpdatePatientRecordActivity extends AppCompatActivity implements Vi
                 bloodTypeSelected = (parent.getSelectedItem()).toString();
                 break;
 
+        }
+    }
+
+    public class BackProcessResponseReciever extends BroadcastReceiver {
+
+        public static final String ACTION_RESP = "com.dlsu.getbetter.getbetter.intent.action.MESSAGE_PROCESSED";
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            TextView result = (TextView) findViewById(R.id.txt_result);
+            String text = intent.getStringExtra(CryptoFileService.CRYPTO_OUT_MSG);
+            result.setText(text);
+            Log.d("result txt:", text);
         }
     }
 }
