@@ -35,6 +35,7 @@ import com.dlsu.getbetter.getbetter.objects.Patient;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -46,6 +47,9 @@ import java.util.StringTokenizer;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+
+import static android.os.Environment.DIRECTORY_DOCUMENTS;
+import static com.dlsu.getbetter.getbetter.cryptoGB.BackProcessResponseReciever.ACTION_RESP;
 
 public class UpdatePatientRecordActivity extends AppCompatActivity implements View.OnClickListener,
         AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListener {
@@ -75,7 +79,6 @@ public class UpdatePatientRecordActivity extends AppCompatActivity implements Vi
     private Uri fileUri;
 
     private BackProcessResponseReciever reciever;
-    public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,17 +104,58 @@ public class UpdatePatientRecordActivity extends AppCompatActivity implements Vi
         bindListeners(this);
 
         //broadcast stuff
-        IntentFilter filter = new IntentFilter(BackProcessResponseReciever.ACTION_RESP);
-        filter.addCategory(Intent.CATEGORY_DEFAULT);
-        reciever = new BackProcessResponseReciever();
-        registerReceiver(reciever, filter);
+//        IntentFilter filter = new IntentFilter(BackProcessResponseReciever.ACTION_RESP);
+//        filter.addCategory(Intent.CATEGORY_DEFAULT);
+//        reciever = new BackProcessResponseReciever();
+//        registerReceiver(reciever, filter);
+//        Log.d("receiver", "created");
     }
 
-    @Override
-    protected void onStop(){
-        unregisterReceiver(reciever);
-        super.onStop();
-    }
+//    @Override
+//    protected void onStart(){
+//        //broadcast stuff
+//        Log.d("receiver", "here");
+//        super.onStart();
+//        IntentFilter filter = new IntentFilter(BackProcessResponseReciever.ACTION_RESP);
+//        filter.addCategory(Intent.CATEGORY_DEFAULT);
+//        reciever = new BackProcessResponseReciever();
+//        registerReceiver(reciever, filter);
+//        Log.d("receiver", "created");
+//    }
+
+//    @Override
+//    protected void onStop(){
+//        Log.d("receiver", "not here");
+//        try {
+//            unregisterReceiver(reciever);
+//        } catch(Exception e){
+//            Log.d("receiver error", e.toString());
+//        }
+//    }
+
+//    @Override
+//    protected void onPause(){
+//        Log.d("receiver", "not here");
+//        try {
+//            unregisterReceiver(reciever);
+//        } catch(Exception e){
+//            Log.d("receiver error", e.toString());
+//        }
+//        super.onPause();
+////        super.onStop();
+//    }
+//
+//    @Override
+//    protected void onResume(){
+//        Log.d("receiver", "here again");
+//        super.onResume();
+//
+//        //broadcast stuff
+//        IntentFilter filter = new IntentFilter(BackProcessResponseReciever.ACTION_RESP);
+//        filter.addCategory(Intent.CATEGORY_DEFAULT);
+//        reciever = new BackProcessResponseReciever();
+//        registerReceiver(reciever, filter);
+//    }
 
     private void bindViews(UpdatePatientRecordActivity activity) {
 
@@ -348,12 +392,98 @@ public class UpdatePatientRecordActivity extends AppCompatActivity implements Vi
     }
 
 
+    private void doSomethingCrypt(String dec, File input){
+        Log.d("service in", "yes");
+        File path = new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_DOCUMENTS),
+                    DirectoryConstants.CRYPTO_FOLDER);
+        path.mkdirs();
+        File output = new File(path.getPath() + File.pathSeparator + input.getName());
+        Log.d("output", output.getAbsolutePath());
+        switch(dec){
+            case "enc":{
+                try{
+                    FileOutputStream fos = new FileOutputStream(output);
+                    fos.write(read(input));
+                    fos.flush();
+                    fos.close();
+                } catch(Exception e){
+                    Log.e("error", e.toString());
+                }
+                Log.d("Action", "enc");
+            }; break;
+        }
+//        Log.d("CRYPTO_FILE_NAME", CRYPTO_FILE_NAME);
+//        byte[] in = intent.getByteArrayExtra("CRYPTO_FILE_INPUT");
+//        Intent broadcastIntent = new Intent();
+//        broadcastIntent.setAction(ACTION_RESP);
+//        broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
+//        if (in.length>0){
+//            Log.d("in.length", "yes!");
+//            broadcastIntent.putExtra(CRYPTO_OUT_MSG, "dekitaaaaa");
+//            FileOutputStream fos = null;
+//            File path = new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_DOCUMENTS),
+//                    DirectoryConstants.CRYPTO_FOLDER);
+//            boolean success = true;
+//            success = path.mkdirs();
+//            MediaScannerConnection.scanFile(this, new String[] {path.toString()}, null,
+//                    new MediaScannerConnection.OnScanCompletedListener(){
+//                        public void onScanCompleted(String path, Uri uri){
+//                            Log.d("ExternalStorage", "Scanned" + path + ":");
+//                            Log.d("ExternalStorage", "-> uri=" + uri);
+//                        }
+//                    });
+//            if (success){
+//                File input = new File(path, intent.getCharArrayExtra("CRYPTO_FILE_NAME").toString());
+//                try {
+////            file = new File(floc + fname);
+//                    fos = new FileOutputStream(input);
+//                    fos.write(in);
+//                    fos.flush();
+//                    fos.close();
+//                    if(input.exists()) Log.i("file created", "yes");
+//                    else Log.i("file created", "no");
+//                    MediaScannerConnection.scanFile(this, new String[] {input.toString()}, null,
+//                            new MediaScannerConnection.OnScanCompletedListener(){
+//                                public void onScanCompleted(String path, Uri uri){
+//                                    Log.d("ExternalStorage", "Scanned" + path + ":");
+//                                    Log.d("ExternalStorage", "-> uri=" + uri);
+//                                }
+//                            });
+//                } catch(Exception e){
+//                    e.printStackTrace();
+//                    broadcastIntent.putExtra(CRYPTO_OUT_MSG, "noooooo");
+//                    sendBroadcast(broadcastIntent);
+//                System.exit(1);
+//                }
+//            } else{
+//                Log.i("file created", "no!");
+////                sendBroadcast(broadcastIntent);
+//            }
+//
+//        } else{
+//            Log.d("in.length", "no!");
+//            broadcastIntent.putExtra(CRYPTO_OUT_MSG, "dekinaiiii");
+//            sendBroadcast(broadcastIntent);
+//        }
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if(requestCode == REQUEST_IMAGE1 && resultCode == Activity.RESULT_OK) {
             setPic(profileImage, fileUri.getPath());
             profilePicPath = fileUri.getPath();
+            doSomethingCrypt("enc", new File(profilePicPath));
+//            Intent intent = new Intent(this, CryptoFileService.class);
+//            try {
+//                intent.putExtra("CRYPTO_FILE_INPUT", read(new File(profilePicPath)));
+//                intent.putExtra("CRYPTO_FILE_NAME", new File(profilePicPath).getName());
+//                Log.d("file selected", profilePicPath);
+//                startService(intent);
+//                Log.d("intent service", "started");
+//            } catch (Exception e){
+//                e.printStackTrace();
+//                Log.d("file error", e.toString());
+//            }
         }
     }
 
@@ -376,9 +506,9 @@ public class UpdatePatientRecordActivity extends AppCompatActivity implements Vi
 
     private void takePicture() {
 
-        ActivityCompat.requestPermissions(this, new String[]{
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+//        ActivityCompat.requestPermissions(this, new String[]{
+//                        Manifest.permission.WRITE_EXTERNAL_STORAGE},
+//                MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         File img = createImageFile();
@@ -387,14 +517,6 @@ public class UpdatePatientRecordActivity extends AppCompatActivity implements Vi
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
         startActivityForResult(intent, REQUEST_IMAGE1);
 
-        intent = new Intent(this, CryptoFileService.class);
-        try {
-            intent.putExtra(CryptoFileService.CRYPTO_FILE_INPUT, read(img));
-            intent.putExtra(CryptoFileService.CRYPTO_FILE_NAME, img.getName());
-        } catch (IOException e){
-            e.printStackTrace();
-        }
-        startService(intent);
 
     }
 
@@ -513,16 +635,16 @@ public class UpdatePatientRecordActivity extends AppCompatActivity implements Vi
         }
     }
 
-    public class BackProcessResponseReciever extends BroadcastReceiver {
-
-        public static final String ACTION_RESP = "com.dlsu.getbetter.getbetter.intent.action.MESSAGE_PROCESSED";
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            TextView result = (TextView) findViewById(R.id.txt_result);
-            String text = intent.getStringExtra(CryptoFileService.CRYPTO_OUT_MSG);
-            result.setText(text);
-            Log.d("result txt:", text);
-        }
-    }
+//    public class BackProcessResponseReciever extends BroadcastReceiver {
+//
+//        public static final String ACTION_RESP = "com.dlsu.getbetter.getbetter.intent.action.MESSAGE_PROCESSED";
+//
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            TextView result = (TextView) findViewById(R.id.txt_result);
+//            String text = intent.getStringExtra(CryptoFileService.CRYPTO_OUT_MSG);
+//            result.setText(text);
+//            Log.d("result txt:", text);
+//        }
+//    }
 }

@@ -30,7 +30,7 @@ import static com.dlsu.getbetter.getbetter.cryptoGB.BackProcessResponseReciever.
 public class CryptoFileService extends IntentService {
 
     private file_aes cryptfile = null;
-    private final String keyloc;
+//    private final String keyloc;
     private String fileloc;
 
     public static String CRYPTO_FILE_INPUT = null;
@@ -44,29 +44,40 @@ public class CryptoFileService extends IntentService {
      *
      * @param name Used to name the worker thread, important only for debugging.
      */
-    public CryptoFileService(String name, String fileloc) {
-        super(name);
-        aes src = new aes();
-        try {
-            src.retrieveKey(fileloc);
-        } catch (IOException e) {
-            e.printStackTrace();
-            src.setKey();
-        } finally {
-            this.cryptfile = new file_aes(src);
-            this.keyloc = fileloc;
-        }
-    }
+//    public CryptoFileService(String name, String fileloc) {
+//        super(name);
+//        aes src = new aes();
+//        try {
+//            src.retrieveKey(fileloc);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            src.setKey();
+//        } finally {
+//            this.cryptfile = new file_aes(src);
+//            this.keyloc = fileloc;
+//        }
+//    }
+//
+//    public CryptoFileService(String name, aes src, String fileloc){
+//        super(name);
+//        this.cryptfile = new file_aes(src);
+//        this.keyloc = fileloc;
+//    }
 
-    public CryptoFileService(String name, aes src, String fileloc){
+    public CryptoFileService(String name){
         super(name);
-        this.cryptfile = new file_aes(src);
-        this.keyloc = fileloc;
+        Log.d("new service", "yes");
+    }
+    public CryptoFileService(){
+        super("CryptoFileService");
+        Log.d("new service", "yes");
     }
 
     @Override
-    protected void onHandleIntent(@Nullable Intent intent) {
+    protected void onHandleIntent(Intent intent) {
 
+        Log.d("service in", "yes");
+//        Log.d("CRYPTO_FILE_NAME", CRYPTO_FILE_NAME);
         byte[] in = intent.getByteArrayExtra("CRYPTO_FILE_INPUT");
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(ACTION_RESP);
@@ -78,16 +89,16 @@ public class CryptoFileService extends IntentService {
             File path = new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_DOCUMENTS),
                     DirectoryConstants.CRYPTO_FOLDER);
             boolean success = true;
-            if(!path.exists()) success = path.mkdirs();
-            MediaScannerConnection.scanFile(this, new String[] {path.toString()}, null,
-                    new MediaScannerConnection.OnScanCompletedListener(){
-                        public void onScanCompleted(String path, Uri uri){
-                            Log.d("ExternalStorage", "Scanned" + path + ":");
-                            Log.d("ExternalStorage", "-> uri=" + uri);
-                        }
-                    });
+            success = path.mkdirs();
+//            MediaScannerConnection.scanFile(this, new String[] {path.toString()}, null,
+//                    new MediaScannerConnection.OnScanCompletedListener(){
+//                        public void onScanCompleted(String path, Uri uri){
+//                            Log.d("ExternalStorage", "Scanned" + path + ":");
+//                            Log.d("ExternalStorage", "-> uri=" + uri);
+//                        }
+//                    });
             if (success){
-                File input = new File(path, intent.getCharArrayExtra(CRYPTO_FILE_NAME).toString() + ".jpg");
+                File input = new File(path, intent.getCharArrayExtra("CRYPTO_FILE_NAME").toString());
                 try {
 //            file = new File(floc + fname);
                     fos = new FileOutputStream(input);
@@ -96,27 +107,29 @@ public class CryptoFileService extends IntentService {
                     fos.close();
                     if(input.exists()) Log.i("file created", "yes");
                     else Log.i("file created", "no");
-                    MediaScannerConnection.scanFile(this, new String[] {input.toString()}, null,
-                            new MediaScannerConnection.OnScanCompletedListener(){
-                                public void onScanCompleted(String path, Uri uri){
-                                    Log.d("ExternalStorage", "Scanned" + path + ":");
-                                    Log.d("ExternalStorage", "-> uri=" + uri);
-                                }
-                            });
+//                    MediaScannerConnection.scanFile(this, new String[] {input.toString()}, null,
+//                            new MediaScannerConnection.OnScanCompletedListener(){
+//                                public void onScanCompleted(String path, Uri uri){
+//                                    Log.d("ExternalStorage", "Scanned" + path + ":");
+//                                    Log.d("ExternalStorage", "-> uri=" + uri);
+//                                }
+//                            });
                 } catch(Exception e){
                     e.printStackTrace();
                     broadcastIntent.putExtra(CRYPTO_OUT_MSG, "noooooo");
+                    sendBroadcast(broadcastIntent);
 //                System.exit(1);
                 }
             } else{
                 Log.i("file created", "no!");
+                sendBroadcast(broadcastIntent);
             }
 
         } else{
             Log.d("in.length", "no!");
             broadcastIntent.putExtra(CRYPTO_OUT_MSG, "dekinaiiii");
+            sendBroadcast(broadcastIntent);
         }
-        sendBroadcast(broadcastIntent);
 //            System.out.println("Dekitaaaaaa");
 //        else System.out.println("Dekinaiiiii");
 //        String ch = intent.getStringExtra("CRYPTO_FILE_CHOICE");
