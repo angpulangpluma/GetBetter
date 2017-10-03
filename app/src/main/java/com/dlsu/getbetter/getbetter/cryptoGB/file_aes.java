@@ -36,7 +36,7 @@ public class file_aes {
     }
 
     public void encryptFile(File file){
-        File encrypted = new File("demo2\\" + returnFileName(file)+"_encrypted."+returnFileExt(file));
+        File encrypted = new File(file.getPath() + "//" + returnFileName(file)+"_encrypted."+returnFileExt(file));
         Cipher cp = filealgo.getCipher();
         SecretKeySpec k = filealgo.getKey();
         try{
@@ -53,7 +53,7 @@ public class file_aes {
     }
 
     public void decryptFile(File file){
-        File decrypted = new File("demo2de\\" + returnFileName(file)+"_decrypted."+returnFileExt(file));
+        File decrypted = new File(file.getPath() + "//" + returnFileName(file)+"_decrypted."+returnFileExt(file));
         Cipher cp = filealgo.getCipher();
         SecretKeySpec k = filealgo.getKey();
         try{

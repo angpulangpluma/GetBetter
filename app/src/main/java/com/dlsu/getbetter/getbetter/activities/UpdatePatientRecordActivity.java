@@ -30,6 +30,7 @@ import com.dlsu.getbetter.getbetter.DirectoryConstants;
 import com.dlsu.getbetter.getbetter.R;
 import com.dlsu.getbetter.getbetter.cryptoGB.BackProcessResponseReciever;
 import com.dlsu.getbetter.getbetter.cryptoGB.CryptoFileService;
+import com.dlsu.getbetter.getbetter.cryptoGB.file_aes;
 import com.dlsu.getbetter.getbetter.database.DataAdapter;
 import com.dlsu.getbetter.getbetter.objects.Patient;
 
@@ -393,11 +394,14 @@ public class UpdatePatientRecordActivity extends AppCompatActivity implements Vi
 
 
     private void doSomethingCrypt(String dec, File input){
+
         Log.d("service in", "yes");
+
+        file_aes mastercry = new file_aes();
         File path = new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_DOCUMENTS),
                     DirectoryConstants.CRYPTO_FOLDER);
         path.mkdirs();
-        File output = new File(path.getPath() + File.pathSeparator + input.getName());
+        File output = new File(path.getPath() + "//" + input.getName());
         Log.d("output", output.getAbsolutePath());
         switch(dec){
             case "enc":{
@@ -406,10 +410,15 @@ public class UpdatePatientRecordActivity extends AppCompatActivity implements Vi
                     fos.write(read(input));
                     fos.flush();
                     fos.close();
+                    mastercry.encryptFile(output);
                 } catch(Exception e){
                     Log.e("error", e.toString());
                 }
                 Log.d("Action", "enc");
+            }; break;
+            case "dec":{
+                mastercry.decryptFile(input);
+                Log.d("Action", "dec");
             }; break;
         }
 //        Log.d("CRYPTO_FILE_NAME", CRYPTO_FILE_NAME);
