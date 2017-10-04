@@ -9,22 +9,31 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dlsu.getbetter.getbetter.DirectoryConstants;
 import com.dlsu.getbetter.getbetter.R;
+import com.dlsu.getbetter.getbetter.cryptoGB.file_aes;
 import com.dlsu.getbetter.getbetter.sessionmanagers.NewPatientSessionManager;
 import com.dlsu.getbetter.getbetter.sessionmanagers.SystemSessionManager;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.logging.Handler;
+
+import static android.os.Environment.DIRECTORY_DOCUMENTS;
 
 public class RecordHpiActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -270,8 +279,9 @@ public class RecordHpiActivity extends AppCompatActivity implements View.OnClick
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
                 chiefComplaintName = input.getText().toString();
+                doSomethingCryptFile("enc", new File(outputFile));
+                Log.d("recorded", "yes");
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -290,5 +300,55 @@ public class RecordHpiActivity extends AppCompatActivity implements View.OnClick
 
     public static RecordHpiActivity getInstance() {
         return recordHpiActivity;
+    }
+
+    private byte[] read(File file) throws IOException{
+        byte[] buffer = new byte[(int) file.length()];
+        InputStream ios = null;
+        try{
+            ios = new FileInputStream(file);
+            if(ios.read(buffer)==-1){
+                throw new IOException(
+                        "EOF reached while trying to read the whole file.");
+            }
+        } finally{
+            try {
+                if (ios != null) ios.close();
+            } catch (IOException e){
+
+            }
+        }
+        return buffer;
+    }
+
+    private void doSomethingCryptFile(String dec, File input){
+
+        Log.d("service in", "yes");
+
+        file_aes mastercry = new file_aes();
+        File path = new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_DOCUMENTS),
+                DirectoryConstants.CRYPTO_FOLDER);
+        path.mkdirs();
+        File output = new File(path.getPath() +"/" + input.getName());
+        Log.d("output", output.getAbsolutePath());
+        try {
+            FileOutputStream fos = new FileOutputStream(output);
+            fos.write(read(input));
+            fos.flush();
+            fos.close();
+        } catch(Exception e){
+            Log.e("error", e.toString());
+        }
+        switch(dec){
+            case "enc":{
+                mastercry.encryptFile(output);
+                Log.d("Action", "enc");
+            }; break;
+            case "dec":{
+                mastercry.decryptFile(input);
+                Log.d("Action", "dec");
+            }; break;
+        }
+//
     }
 }
