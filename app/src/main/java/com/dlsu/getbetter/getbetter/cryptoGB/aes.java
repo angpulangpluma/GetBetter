@@ -4,8 +4,6 @@ package com.dlsu.getbetter.getbetter.cryptoGB;
  * Created by YING LOPEZ on 9/28/2017.
  */
 
-import android.util.Log;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -59,14 +57,6 @@ public class aes {
             secretkey = new SecretKeySpec(key, "AES");
         } catch (Exception e){
             e.printStackTrace();
-        }
-    }
-
-    public void setCipher(){
-        try {
-            cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");
-        }catch(Exception e){
-            Log.e("error", e.toString());
         }
     }
 

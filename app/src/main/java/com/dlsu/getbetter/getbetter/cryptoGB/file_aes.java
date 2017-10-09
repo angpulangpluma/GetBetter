@@ -23,7 +23,6 @@ public class file_aes {
     public file_aes(){
         filealgo = new aes();
         filealgo.setKey();
-        filealgo.setCipher();
         ciph = filealgo.getCipher();
     }
 
@@ -37,7 +36,7 @@ public class file_aes {
     }
 
     public void encryptFile(File file){
-        File encrypted = new File(file.getPath() + "_encrypted."+returnFileExt(file));
+        File encrypted = new File(file.getPath() + "//" + returnFileName(file)+"_encrypted."+returnFileExt(file));
         Cipher cp = filealgo.getCipher();
         SecretKeySpec k = filealgo.getKey();
         try{

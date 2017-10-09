@@ -104,7 +104,59 @@ public class UpdatePatientRecordActivity extends AppCompatActivity implements Vi
         showDatePlaceholder();
         bindListeners(this);
 
+        //broadcast stuff
+//        IntentFilter filter = new IntentFilter(BackProcessResponseReciever.ACTION_RESP);
+//        filter.addCategory(Intent.CATEGORY_DEFAULT);
+//        reciever = new BackProcessResponseReciever();
+//        registerReceiver(reciever, filter);
+//        Log.d("receiver", "created");
     }
+
+//    @Override
+//    protected void onStart(){
+//        //broadcast stuff
+//        Log.d("receiver", "here");
+//        super.onStart();
+//        IntentFilter filter = new IntentFilter(BackProcessResponseReciever.ACTION_RESP);
+//        filter.addCategory(Intent.CATEGORY_DEFAULT);
+//        reciever = new BackProcessResponseReciever();
+//        registerReceiver(reciever, filter);
+//        Log.d("receiver", "created");
+//    }
+
+//    @Override
+//    protected void onStop(){
+//        Log.d("receiver", "not here");
+//        try {
+//            unregisterReceiver(reciever);
+//        } catch(Exception e){
+//            Log.d("receiver error", e.toString());
+//        }
+//    }
+
+//    @Override
+//    protected void onPause(){
+//        Log.d("receiver", "not here");
+//        try {
+//            unregisterReceiver(reciever);
+//        } catch(Exception e){
+//            Log.d("receiver error", e.toString());
+//        }
+//        super.onPause();
+////        super.onStop();
+//    }
+//
+//    @Override
+//    protected void onResume(){
+//        Log.d("receiver", "here again");
+//        super.onResume();
+//
+//        //broadcast stuff
+//        IntentFilter filter = new IntentFilter(BackProcessResponseReciever.ACTION_RESP);
+//        filter.addCategory(Intent.CATEGORY_DEFAULT);
+//        reciever = new BackProcessResponseReciever();
+//        registerReceiver(reciever, filter);
+//    }
 
     private void bindViews(UpdatePatientRecordActivity activity) {
 
@@ -340,26 +392,8 @@ public class UpdatePatientRecordActivity extends AppCompatActivity implements Vi
         birthdateInput.setText(date);
     }
 
-    private byte[] read(File file) throws IOException{
-        byte[] buffer = new byte[(int) file.length()];
-        InputStream ios = null;
-        try{
-            ios = new FileInputStream(file);
-            if(ios.read(buffer)==-1){
-                throw new IOException(
-                        "EOF reached while trying to read the whole file.");
-            }
-        } finally{
-            try {
-                if (ios != null) ios.close();
-            } catch (IOException e){
 
-            }
-        }
-        return buffer;
-    }
-
-    private void doSomethingCryptFile(String dec, File input){
+    private void doSomethingCrypt(String dec, File input){
 
         Log.d("service in", "yes");
 
@@ -367,19 +401,19 @@ public class UpdatePatientRecordActivity extends AppCompatActivity implements Vi
         File path = new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_DOCUMENTS),
                     DirectoryConstants.CRYPTO_FOLDER);
         path.mkdirs();
-        File output = new File(path.getPath() +"/" + input.getName());
+        File output = new File(path.getPath() + "//" + input.getName());
         Log.d("output", output.getAbsolutePath());
-        try {
-            FileOutputStream fos = new FileOutputStream(output);
-            fos.write(read(input));
-            fos.flush();
-            fos.close();
-        } catch(Exception e){
-            Log.e("error", e.toString());
-        }
         switch(dec){
             case "enc":{
-                mastercry.encryptFile(output);
+                try{
+                    FileOutputStream fos = new FileOutputStream(output);
+                    fos.write(read(input));
+                    fos.flush();
+                    fos.close();
+                    mastercry.encryptFile(output);
+                } catch(Exception e){
+                    Log.e("error", e.toString());
+                }
                 Log.d("Action", "enc");
             }; break;
             case "dec":{
@@ -387,16 +421,78 @@ public class UpdatePatientRecordActivity extends AppCompatActivity implements Vi
                 Log.d("Action", "dec");
             }; break;
         }
+//        Log.d("CRYPTO_FILE_NAME", CRYPTO_FILE_NAME);
+//        byte[] in = intent.getByteArrayExtra("CRYPTO_FILE_INPUT");
+//        Intent broadcastIntent = new Intent();
+//        broadcastIntent.setAction(ACTION_RESP);
+//        broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
+//        if (in.length>0){
+//            Log.d("in.length", "yes!");
+//            broadcastIntent.putExtra(CRYPTO_OUT_MSG, "dekitaaaaa");
+//            FileOutputStream fos = null;
+//            File path = new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_DOCUMENTS),
+//                    DirectoryConstants.CRYPTO_FOLDER);
+//            boolean success = true;
+//            success = path.mkdirs();
+//            MediaScannerConnection.scanFile(this, new String[] {path.toString()}, null,
+//                    new MediaScannerConnection.OnScanCompletedListener(){
+//                        public void onScanCompleted(String path, Uri uri){
+//                            Log.d("ExternalStorage", "Scanned" + path + ":");
+//                            Log.d("ExternalStorage", "-> uri=" + uri);
+//                        }
+//                    });
+//            if (success){
+//                File input = new File(path, intent.getCharArrayExtra("CRYPTO_FILE_NAME").toString());
+//                try {
+////            file = new File(floc + fname);
+//                    fos = new FileOutputStream(input);
+//                    fos.write(in);
+//                    fos.flush();
+//                    fos.close();
+//                    if(input.exists()) Log.i("file created", "yes");
+//                    else Log.i("file created", "no");
+//                    MediaScannerConnection.scanFile(this, new String[] {input.toString()}, null,
+//                            new MediaScannerConnection.OnScanCompletedListener(){
+//                                public void onScanCompleted(String path, Uri uri){
+//                                    Log.d("ExternalStorage", "Scanned" + path + ":");
+//                                    Log.d("ExternalStorage", "-> uri=" + uri);
+//                                }
+//                            });
+//                } catch(Exception e){
+//                    e.printStackTrace();
+//                    broadcastIntent.putExtra(CRYPTO_OUT_MSG, "noooooo");
+//                    sendBroadcast(broadcastIntent);
+//                System.exit(1);
+//                }
+//            } else{
+//                Log.i("file created", "no!");
+////                sendBroadcast(broadcastIntent);
+//            }
 //
+//        } else{
+//            Log.d("in.length", "no!");
+//            broadcastIntent.putExtra(CRYPTO_OUT_MSG, "dekinaiiii");
+//            sendBroadcast(broadcastIntent);
+//        }
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if(requestCode == REQUEST_IMAGE1 && resultCode == Activity.RESULT_OK) {
             setPic(profileImage, fileUri.getPath());
             profilePicPath = fileUri.getPath();
-            doSomethingCryptFile("enc", new File(profilePicPath));
+            doSomethingCrypt("enc", new File(profilePicPath));
+//            Intent intent = new Intent(this, CryptoFileService.class);
+//            try {
+//                intent.putExtra("CRYPTO_FILE_INPUT", read(new File(profilePicPath)));
+//                intent.putExtra("CRYPTO_FILE_NAME", new File(profilePicPath).getName());
+//                Log.d("file selected", profilePicPath);
+//                startService(intent);
+//                Log.d("intent service", "started");
+//            } catch (Exception e){
+//                e.printStackTrace();
+//                Log.d("file error", e.toString());
+//            }
         }
     }
 
@@ -431,6 +527,25 @@ public class UpdatePatientRecordActivity extends AppCompatActivity implements Vi
         startActivityForResult(intent, REQUEST_IMAGE1);
 
 
+    }
+
+    private byte[] read(File file) throws IOException{
+        byte[] buffer = new byte[(int) file.length()];
+        InputStream ios = null;
+        try{
+            ios = new FileInputStream(file);
+            if(ios.read(buffer)==-1){
+                throw new IOException(
+                        "EOF reached while trying to read the whole file.");
+            }
+        } finally{
+            try {
+                if (ios != null) ios.close();
+            } catch (IOException e){
+
+            }
+        }
+        return buffer;
     }
 
     private void setPic(CircleImageView mImageView, String mCurrentPhotoPath) {
@@ -529,4 +644,16 @@ public class UpdatePatientRecordActivity extends AppCompatActivity implements Vi
         }
     }
 
+//    public class BackProcessResponseReciever extends BroadcastReceiver {
+//
+//        public static final String ACTION_RESP = "com.dlsu.getbetter.getbetter.intent.action.MESSAGE_PROCESSED";
+//
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            TextView result = (TextView) findViewById(R.id.txt_result);
+//            String text = intent.getStringExtra(CryptoFileService.CRYPTO_OUT_MSG);
+//            result.setText(text);
+//            Log.d("result txt:", text);
+//        }
+//    }
 }
