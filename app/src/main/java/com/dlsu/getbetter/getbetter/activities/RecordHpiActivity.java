@@ -249,7 +249,6 @@ public class RecordHpiActivity extends AppCompatActivity implements View.OnClick
                     minutesView.setText("0" + minutes);
                 }
                 handler.postDelayed(this, 1000);
-
             }
         }
     };
@@ -290,5 +289,11 @@ public class RecordHpiActivity extends AppCompatActivity implements View.OnClick
 
     public static RecordHpiActivity getInstance() {
         return recordHpiActivity;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        newPatientSessionManager.endSession();
     }
 }
