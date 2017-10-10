@@ -42,3 +42,5 @@ captures/
 
 .idea/gradle.xml
 projectFilesBackup/
+.idea/misc.xml
+app/build.gradle
