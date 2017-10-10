@@ -34,7 +34,7 @@ public class text_aes {
 
         try{
             ciph = Cipher.getInstance("AES/ECB/PKCS5PADDING");
-            ciph.init(Cipher.DECRYPT_MODE, textalgo.getKey());
+            ciph.init(Cipher.ENCRYPT_MODE, textalgo.getKey());
             decrypted = new String(ciph.doFinal(Base64.decodeBase64(str)));
         }catch(Exception e){
             e.printStackTrace();
