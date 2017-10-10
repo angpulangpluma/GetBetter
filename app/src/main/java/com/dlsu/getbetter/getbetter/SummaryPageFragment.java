@@ -53,6 +53,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
+import static android.support.v7.cardview.R.styleable.CardView;
+import static android.support.v7.recyclerview.R.styleable.RecyclerView;
+
 /**
  * A simple {@link Fragment} subclass.
  */
