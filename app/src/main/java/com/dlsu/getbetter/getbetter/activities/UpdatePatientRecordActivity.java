@@ -28,8 +28,6 @@ import android.widget.TextView;
 
 import com.dlsu.getbetter.getbetter.DirectoryConstants;
 import com.dlsu.getbetter.getbetter.R;
-import com.dlsu.getbetter.getbetter.cryptoGB.BackProcessResponseReciever;
-import com.dlsu.getbetter.getbetter.cryptoGB.CryptoFileService;
 import com.dlsu.getbetter.getbetter.cryptoGB.file_aes;
 import com.dlsu.getbetter.getbetter.database.DataAdapter;
 import com.dlsu.getbetter.getbetter.objects.Patient;
@@ -50,7 +48,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import static android.os.Environment.DIRECTORY_DOCUMENTS;
-import static com.dlsu.getbetter.getbetter.cryptoGB.BackProcessResponseReciever.ACTION_RESP;
 
 public class UpdatePatientRecordActivity extends AppCompatActivity implements View.OnClickListener,
         AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListener {
@@ -78,8 +75,6 @@ public class UpdatePatientRecordActivity extends AppCompatActivity implements Vi
     private static final int REQUEST_IMAGE1 = 100;
 
     private Uri fileUri;
-
-    private BackProcessResponseReciever reciever;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

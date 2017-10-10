@@ -679,8 +679,10 @@ public class SummaryPageFragment extends Fragment implements View.OnClickListene
         Log.e("patientId", patientId + "");
         Log.e("chiefComplaint", chiefComplaint);
 
-        getBetterDb.insertCaseRecord(caseRecordId, patientId, healthCenterId, chiefComplaint,
-                    controlNumber);
+//        getBetterDb.insertCaseRecord(caseRecordId, patientId, healthCenterId, chiefComplaint,
+//                    controlNumber);
+
+        getBetterDb.insertCaseRecord(userId, healthCenterId, chiefComplaint);
 
 
         getBetterDb.closeDatabase();
