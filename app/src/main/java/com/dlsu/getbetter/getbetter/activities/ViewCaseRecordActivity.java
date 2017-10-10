@@ -26,7 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dlsu.getbetter.getbetter.DirectoryConstants;
-import com.dlsu.getbetter.getbetter.ListenAudioFragment;
+//import com.dlsu.getbetter.getbetter.ListenAudioFragment;
 import com.dlsu.getbetter.getbetter.R;
 import com.dlsu.getbetter.getbetter.ViewVideoFragment;
 import com.dlsu.getbetter.getbetter.adapters.FileAttachmentsAdapter;
@@ -254,8 +254,8 @@ public class ViewCaseRecordActivity extends AppCompatActivity implements MediaCo
 
 
                         FragmentManager fm = getSupportFragmentManager();
-                        ListenAudioFragment listenAudioFragment = ListenAudioFragment.newInstance(path, title);
-                        listenAudioFragment.show(fm, "fragment_listen");
+//                        ListenAudioFragment listenAudioFragment = ListenAudioFragment.newInstance(path, title);
+//                        listenAudioFragment.show(fm, "fragment_listen");
                     }
                 }
             }

@@ -33,7 +33,7 @@ import android.widget.MediaController;
 import android.widget.TextView;
 
 import com.dlsu.getbetter.getbetter.DirectoryConstants;
-import com.dlsu.getbetter.getbetter.ListenAudioFragment;
+//import com.dlsu.getbetter.getbetter.ListenAudioFragment;
 import com.dlsu.getbetter.getbetter.R;
 import com.dlsu.getbetter.getbetter.RecordAudioFragment;
 import com.dlsu.getbetter.getbetter.ViewVideoFragment;
@@ -245,8 +245,8 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                 } else if (attachments.get(position).getAttachmentType() == 3 || attachments.get(position).getAttachmentType() == 5) {
 
                     FragmentManager fm = getSupportFragmentManager();
-                    ListenAudioFragment listenAudioFragment = ListenAudioFragment.newInstance(path, title);
-                    listenAudioFragment.show(fm, "fragment_listen");
+//                    ListenAudioFragment listenAudioFragment = ListenAudioFragment.newInstance(path, title);
+//                    listenAudioFragment.show(fm, "fragment_listen");
                 }
 
             }
