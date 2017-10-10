@@ -27,11 +27,8 @@ import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.HttpResponse;
 
 public class UploadPatientToServerActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -44,7 +41,6 @@ public class UploadPatientToServerActivity extends AppCompatActivity implements 
     private static final String BIRTHDATE_KEY = "birthdate";
     private static final String GENDER_ID_KEY = "gender_id";
     private static final String CIVIL_STATUS_KEY = "civil_status_id";
-    private static final String IMAGE_NAME_KEY = "image_name";
     private static final String HEALTH_CENTER_KEY = "default_health_center";
     private static final String BLOOD_TYPE_KEY = "blood_type";
     private static final String PROFILE_URL_KEY = "profile_url";
@@ -155,7 +151,7 @@ public class UploadPatientToServerActivity extends AppCompatActivity implements 
 
     }
 
-    private void updateUserId (long newId, long oldId) {
+    private void updateUserId(long newUserId, long oldUserId) {
 
         try {
             getBetterDb.openDatabase();
@@ -163,8 +159,20 @@ public class UploadPatientToServerActivity extends AppCompatActivity implements 
             e.printStackTrace();
         }
 
-        Log.d(TAG, "updateUserId: " + newId);
-        getBetterDb.updateUserId(newId, oldId);
+        getBetterDb.updateUserId(newUserId, oldUserId);
+
+        getBetterDb.closeDatabase();
+    }
+
+    private void updateUser (long updatedUserId) {
+
+        try {
+            getBetterDb.openDatabase();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        getBetterDb.updateUserUploaded(updatedUserId);
 
         getBetterDb.closeDatabase();
 
@@ -177,24 +185,13 @@ public class UploadPatientToServerActivity extends AppCompatActivity implements 
 
         if (id == R.id.upload_patient_upload_btn) {
 
-//            ArrayList<Patient> selectedPatientsList = new ArrayList<>();
-
             for(int i = 0; i < patientsUpload.size(); i++) {
                 Patient selectedPatient = patientsUpload.get(i);
 
                 if(selectedPatient.isChecked()) {
-//                    selectedPatientsList.add(selectedPatients);
                     uploadPatient(selectedPatient);
                 }
             }
-//            uploadPatient(selectedPatientsList);
-
-//            for(int i = 0; i < selectedPatientsList.size(); i++) {
-//                getStringImage(selectedPatientsList.get(i).getProfileImageBytes());
-//                uploadPatient(selectedPatientsList.get(i));
-//            }
-
-
 
         } else if (id == R.id.upload_patient_back_btn) {
 
@@ -206,20 +203,10 @@ public class UploadPatientToServerActivity extends AppCompatActivity implements 
 
     private class GetPatientListTask extends AsyncTask<Void, Void, Void> {
 
-//        ProgressDialog progressDialog = null;
-//        Context context;
-//
-//        public GetPatientListTask(AppCompatActivity activity) {
-//            context = activity;
-//            progressDialog = new ProgressDialog(context);
-//        }
 
         @Override
         protected void onPreExecute() {
-//            progressDialog.setMessage("Populating patient list");
-//            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-//            progressDialog.setIndeterminate(true);
-//            progressDialog.show();
+            showPopulateProgressDialog();
         }
 
         @Override
@@ -233,10 +220,7 @@ public class UploadPatientToServerActivity extends AppCompatActivity implements 
         @Override
         protected void onPostExecute(Void aVoid) {
 
-//            if(progressDialog.isShowing()) {
-//                progressDialog.dismiss();
-//            }
-
+            dismissProgressDialog();
         }
     }
 
@@ -247,15 +231,12 @@ public class UploadPatientToServerActivity extends AppCompatActivity implements 
         RequestParams params = new RequestParams();
         final String contentType = RequestParams.APPLICATION_OCTET_STREAM;
         params.setForceMultipartEntityContentType(true);
-//        List<Map<String, String>> patients = new ArrayList<Map<String, String>>();
-
-//        Map<String, String> patient = new HashMap<>();
 
         String imageFileName = patientUpload.getFirstName().toLowerCase() + "_" +
                 patientUpload.getLastName().toLowerCase() + ".jpg";
         String patientId = String.valueOf(patientUpload.getId());
 
-        params.put(ID_KEY, patientId);
+//        params.put(ID_KEY, patientId);
         params.put(FIRST_NAME_KEY, patientUpload.getFirstName());
         params.put(MIDDLE_NAME_KEY, patientUpload.getMiddleName());
         params.put(LAST_NAME_KEY, patientUpload.getLastName());
@@ -265,17 +246,6 @@ public class UploadPatientToServerActivity extends AppCompatActivity implements 
         params.put(BLOOD_TYPE_KEY, patientUpload.getBloodType());
         params.put(HEALTH_CENTER_KEY, healthCenterId);
 
-//        patient.put(ID_KEY, patientId);
-//        patient.put(FIRST_NAME_KEY, patientUpload.getFirstName());
-//        patient.put(MIDDLE_NAME_KEY, patientUpload.getMiddleName());
-//        patient.put(LAST_NAME_KEY, patientUpload.getLastName());
-//        patient.put(BIRTHDATE_KEY, patientUpload.getBirthdate());
-//        patient.put(GENDER_ID_KEY, String.valueOf(getGenderId(patientUpload.getGender())));
-//        patient.put(CIVIL_STATUS_KEY, String.valueOf(getCivilStatusId(patientUpload.getCivilStatus())));
-//        patient.put(IMAGE_NAME_KEY, imageFileName);
-//        patient.put(HEALTH_CENTER_KEY, String.valueOf(healthCenterId));
-//        patients.add(patient);
-
         File profileImage = new File(patientUpload.getProfileImageBytes());
 
         try {
@@ -284,12 +254,6 @@ public class UploadPatientToServerActivity extends AppCompatActivity implements 
             e.printStackTrace();
         }
 
-//        for(int i = 0; i < patientsUpload.size(); i++) {
-//
-//
-//        }
-
-//        params.put("patients", patient);
         params.setHttpEntityIsRepeatable(true);
         params.setUseJsonStreamer(false);
 
@@ -299,7 +263,7 @@ public class UploadPatientToServerActivity extends AppCompatActivity implements 
             @Override
             public void onStart() {
                 super.onStart();
-                showProgressDialog();
+                showUploadProgressDialog();
             }
 
             @Override
@@ -309,8 +273,9 @@ public class UploadPatientToServerActivity extends AppCompatActivity implements 
                 Log.d(TAG, responseBody);
 
                 newUserId = Long.parseLong(responseBody);
+                updateUser(patientUpload.getId());
                 updateUserId(newUserId, patientUpload.getId());
-                removePatientUpload(patientUpload.getId());
+//                removePatientUpload(patientUpload.getId());
             }
 
             @Override
@@ -319,14 +284,6 @@ public class UploadPatientToServerActivity extends AppCompatActivity implements 
                 featureAlertMessage("Upload Failed");
                 Log.d(TAG, "onFailure: " + responseBody);
                 Log.d(TAG, "onFailure: " + statusCode);
-
-            }
-
-            @Override
-            public void onProgress(long bytesWritten, long totalSize) {
-                super.onProgress(bytesWritten, totalSize);
-                pDialog.setProgress((int)bytesWritten);
-
 
             }
 
@@ -355,13 +312,27 @@ public class UploadPatientToServerActivity extends AppCompatActivity implements 
         builder.show();
     }
 
-    private void showProgressDialog() {
+    private void showPopulateProgressDialog() {
         if(pDialog == null) {
             pDialog = new ProgressDialog(UploadPatientToServerActivity.this);
-            pDialog.setMessage("Uploading patient");
-            pDialog.setProgress(0);
-            pDialog.setMax(100);
-            pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            pDialog.setTitle("Populating Patient List");
+            pDialog.setMessage("Please wait a moment...");
+            pDialog.setIndeterminate(true);
+            pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        }
+
+        pDialog.show();
+    }
+
+    private void showUploadProgressDialog() {
+        if(pDialog == null) {
+            pDialog = new ProgressDialog(UploadPatientToServerActivity.this);
+            pDialog.setTitle("GetBetter Server");
+            pDialog.setMessage("Uploading Patient Records...");
+//            pDialog.setProgress(0);
+//            pDialog.setMax(100);
+            pDialog.setIndeterminate(true);
+            pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         }
         pDialog.show();
     }
@@ -370,12 +341,14 @@ public class UploadPatientToServerActivity extends AppCompatActivity implements 
 
         if(pDialog != null && pDialog.isShowing()) {
             pDialog.dismiss();
+            pDialog = null;
         }
     }
 
     @Override
     protected void onDestroy() {
-        dismissProgressDialog();
         super.onDestroy();
+        dismissProgressDialog();
     }
+
 }
